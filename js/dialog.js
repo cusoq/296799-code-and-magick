@@ -6,6 +6,9 @@
   var FIREBALL_COLORS = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
   var setupOpen = document.querySelector('.setup-open');
   var popupClose = document.querySelector('.setup-close');
+  var form = document.querySelector('.setup-wizard-form');
+
+
   var userNameInput = window.util.popupSetup.querySelector('.setup-user-name');
   var wizardCoat = window.util.popupSetup.querySelector('.wizard-coat');
   var wizardEyes = window.util.popupSetup.querySelector('.wizard-eyes');
@@ -122,6 +125,25 @@
   setupOpen.addEventListener('keydown', onAvatarEnter);
   // обрабатываем открытие диалогового окна по клику на аватар
   setupOpen.addEventListener('click', onAvatarCklick);
+  // Обрабатываем ошибку отправки формы
+  var onErrorSave = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: orange;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+  // обрабатываем отправку данных по AJAX
+  form.addEventListener('submit', function (evt) {
+    window.backend.save(new FormData(form), function () {
+      closePopup(window.util.popupSetup);
+    }, onErrorSave);
+    evt.preventDefault();
+  });
+
   // валидация формы
   userNameInput.addEventListener('input', function () {
     if (userNameInput.validity.tooShort) {
